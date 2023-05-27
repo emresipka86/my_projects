@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: This temp launches an EC2 instance which enables SSH
+
+Resources:
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enables http for Apache Web Server
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: :
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  CFNInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0889a44b331db0194
+      InstanceType: t2.micro
+      KeyName: first-key-pair
+      SecurityGroups:
+        - !Ref WebServerSecurityGroup
+      Tags:
+        - Key: Name
+          Value: Web Server of ${AWS::StackName} Stack 
+      UserData:
+        Fn::Base64:
+          !Sub
+            #! /bin/bash
+            yum update -y
+            yum install httpd -y
+            TOKEN="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+            FOLDER="https://$TOKEN@raw.githubusercontent.com/clarusway/cw-workshop/dev/aws/projects/101-kittens-carousel-static-website-ec2/static-web/"
+            curl -s --create-dirs -o "/var/www/html/index.html" -L "$FOLDER"index.html
+            curl -s --create-dirs -o "/var/www/html/cat0.jpg" -L "$FOLDER"cat0.jpg
+            curl -s --create-dirs -o "/var/www/html/cat1.jpg" -L "$FOLDER"cat1.jpg
+            curl -s --create-dirs -o "/var/www/html/cat2.jpg" -L "$FOLDER"cat2.jpg
+            systemctl start httpd
+            systemctl enable httpd
+Outputs:
+  WebsiteURL:
+    Value: !Sub 
+      - http://${PublicAddress}
+      - PublicAddress: !GetAtt WebServerHost.PublicDnsName
+    Description: Kittens Carousel Application URL
