@@ -31,7 +31,7 @@ Resources:
     Properties:
       ImageId: ami-0bef6cc322bfff646
       InstanceType: t2.micro
-      KeyName: *** APPROPRIATE .PEM ***
+      KeyName: #user .pem file
       SecurityGroups:
         - !Ref WebServerSecurityGroup
       Tags:
