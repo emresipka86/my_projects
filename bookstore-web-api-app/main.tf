@@ -16,7 +16,7 @@ provider "aws" {
 }
 
 provider "github" {
-    token = "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"
+    token = #GITHUB TOKEN HERE 
 }
 
 resource "github_repository" "myrepo" {
@@ -75,7 +75,7 @@ resource "aws_security_group" "tf-docker-sec-gr" {
 resource "aws_instance" "tf-docker-ec2" {
   ami = "ami-04cb4ca688797756f"
   instance_type = "t2.micro"
-  key_name = "first-key-pair"
+  key_name = #SECRET KEY HERE
   vpc_security_group_ids = [aws_security_group.tf-docker-sec-gr.id]
   tags = {
     Name = "Web Server of Bookstore"
@@ -91,7 +91,7 @@ resource "aws_instance" "tf-docker-ec2" {
           curl -SL https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
           chmod +x /usr/local/bin/docker-compose
           mkdir -p /home/ec2-user/bookstore-api
-          TOKEN="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"
+          TOKEN= "GITHUB TOKEN HERE"
           FOLDER="https://$TOKEN@raw.githubusercontent.com/emresipka86/bookstore-api-repo/main/"
           curl -s --create-dirs -o "/home/ec2-user/bookstore-api/app.py" -L "$FOLDER"bookstore-api.py
           curl -s --create-dirs -o "/home/ec2-user/bookstore-api/requirements.txt" -L "$FOLDER"requirements.txt
